@@ -1,1 +1,1 @@
-# degree-separation-large
+# degree-separation-small

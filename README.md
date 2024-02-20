@@ -9,4 +9,4 @@ app_file: streamlit.py
 pinned: false
 ---
 
-# degree-separation-small
+# degree-separation-large

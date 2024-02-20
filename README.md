@@ -1,5 +1,3 @@
-# degree-separation-small
-
 ---
 title: Degree Separation App
 emoji: 🐨
@@ -10,3 +8,5 @@ sdk_version: 1.31.1
 app_file: streamlit.py
 pinned: false
 ---
+
+# degree-separation-small

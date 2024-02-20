@@ -3,77 +3,36 @@ import csv
 import sys
 import time
 from itertools import islice
+from dill import load
 
 from util import Node, QueueFrontier
 light_colors = ["#f2f2f2", "#e6f7ff", "#e6ffe6", "#fff2e6", "#ffe6f7", "#f7e6ff", "#e6fff7", "#ffe6e6", "#fff7e6", "#e6fff7"]
 directory = "large"
 
 @st.cache_data
-def load_data(directory):
-    """
-    Load data from CSV files into memory.
-    """
-    people_data = {}
-    names_data = {}
-    movies_data = {}
-
-    # Load people
-    with open(f"{directory}/people.csv", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            people_data[row["id"]] = {
-                "name": row["name"],
-                "birth": row["birth"],
-                "movies": set()
-            }
-            if row["name"].lower() not in names_data:
-                names_data[row["name"].lower()] = {row["id"]}
-            else:
-                names_data[row["name"].lower()].add(row["id"])
-
-    # Load movies
-    with open(f"{directory}/movies.csv", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            movies_data[row["id"]] = {
-                "title": row["title"],
-                "year": row["year"],
-                "stars": set()
-            }
-
-    # Load stars
-    with open(f"{directory}/stars.csv", encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
-            try:
-                people_data[row["person_id"]]["movies"].add(row["movie_id"])
-                movies_data[row["movie_id"]]["stars"].add(row["person_id"])
-            except KeyError:
-                pass
-
-    return people_data, names_data, movies_data
+def load_people():
+    return load(open("database_export/people.dill", "rb"))
 
 @st.cache_data
-def load_people(directory):
-    return load_data(directory)[0]
+def load_names():
+    return load(open("database_export/names.dill", "rb"))
 
 @st.cache_data
-def load_names(directory):
-    return load_data(directory)[1]
+def load_movies():
+    return load(open("database_export/movies.dill", "rb"))
 
-@st.cache_data
-def load_movies(directory):
-    return load_data(directory)[2]
-
-people = load_people(directory)
-names = load_names(directory)
-movies = load_movies(directory)
+people = load_people()
+names = load_names()
+movies = load_movies()
 
 # button_check_source = st.button('Check Source')
 # button_confirm_source = st.button('Confirm Source')
 
 
 def main():
+    # print(f'People size:  {sys.getsizeof(people)}')
+    # print(f'names size:  {sys.getsizeof(names)}')
+    # print(f'Movies size:  {sys.getsizeof(movies)}')
     st.title("Degrees of Separation App")
 
 
@@ -319,6 +278,7 @@ def shortest_path(source, target, node_explore_show):
             if not frontier.contains_state(state) and state not in explored:
                 new_node = Node(state=state, parent=node, action=action)
                 frontier.add(new_node)
+                # print(f'frontier size:  {sys.getsizeof(frontier.frontier)}')
 
 def person_id_for_name(name):
     person_ids = list(names.get(name.lower(), set()))

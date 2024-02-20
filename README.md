@@ -1,6 +1,6 @@
 # degree-separation-small
 
----
+
 title: Degree Separation App
 emoji: 🐨
 colorFrom: green
